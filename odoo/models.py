@@ -2309,6 +2309,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 tools.add_constraint(cr, self._table, conname, definition)
             elif cons_text(definition) != cons_text(has_definition):
                 # constraint exists but its definition may have changed
+                _logger.warning(f"CITIS: Constrain {conname} in table {self._table} has different definition "
+                                f"{cons_text(definition)} != {cons_text(has_definition)}")
                 tools.drop_constraint(cr, self._table, conname)
                 tools.add_constraint(cr, self._table, conname, definition)
 
