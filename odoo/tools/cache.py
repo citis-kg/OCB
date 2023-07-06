@@ -8,7 +8,7 @@ from decorator import decorator
 # CITIS: fix deprecated code since python 3.11
 # CITIS: this code deprecated, removed on python 3.11
 try:
-    from inspect import formatargspec, getargspec
+    from inspect import formatargspec, getargspec, signature, getfullargspec
 except ImportError:
     import inspect
     from inspect import signature, getfullargspec

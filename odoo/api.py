@@ -49,7 +49,8 @@ import logging
 from collections import defaultdict, Mapping
 # from collections.abc import Mapping
 from contextlib import contextmanager
-from inspect import currentframe, getargspec
+# CITIS: add getfullargspec
+from inspect import currentframe, getargspec, getfullargspec
 from pprint import pformat
 from weakref import WeakSet
 
@@ -643,7 +644,7 @@ def guess(method):
     # introspection on argument names to determine api style
     # CITIS: getargspec is deprecated since python 3.11
     # args, vname, kwname, defaults = getargspec(method)
-    full_arg = getargspec(method)
+    full_arg = getfullargspec(method)
     args = full_arg.args
     vname =  full_arg.varargs
     kwname = full_arg.varkw
