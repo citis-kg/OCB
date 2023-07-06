@@ -24,7 +24,25 @@ import time
 import types
 import werkzeug.utils
 import zipfile
-from collections import defaultdict, Iterable, Mapping, MutableSet, OrderedDict
+# CITIS: fix deprecated code since python 3.11
+from collections import defaultdict, OrderedDict
+try:
+    from collections import Iterable, Mapping, MutableSet
+except ImportError:
+    from collections.abc import Iterable, Mapping, MutableSet, MutableMapping, Set, Sequence, Sized, Hashable, MutableSequence
+    # CITIS: Hotfix agar import yg lain ga error, tambahkan ke collections
+    collections.Mapping = Mapping
+    collections.Iterable = Iterable
+    collections.MutableSet = MutableSet
+    collections.MutableMapping = MutableMapping
+    collections.Set = Set
+    collections.Sequence = Sequence
+    collections.Sized = Sized
+    collections.Hashable = Hashable
+    collections.MutableSequence = MutableSequence
+    import base64
+    base64.encodestring = base64.encodebytes
+
 from itertools import islice, groupby, repeat
 from lxml import etree
 
