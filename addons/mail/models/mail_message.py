@@ -708,7 +708,14 @@ class Message(models.Model):
         res_id = values.get('res_id', self.env.context.get('default_res_id'))
         if not model or not res_id or model not in self.env:
             return False
-        return self.env[model].sudo().browse(res_id).name_get()[0][1]
+        name_get = []
+        try:
+            # return self.env[model].sudo().browse(res_id).name_get()[0][1]
+            name_get = self.env[model].sudo().browse(res_id).name_get()
+            return name_get[0][1]
+        except Exception as ex:
+            raise UserError(f"Cannot Find Related Record Name for model {model} and ID: {res_id} "
+                            f"- name_get result = {name_get}")
 
     @api.model
     def _get_reply_to(self, values):
