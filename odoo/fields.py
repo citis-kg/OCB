@@ -2263,7 +2263,11 @@ class One2many(_RelationalMulti):
         if self.inverse_name:
             # link self to its inverse field and vice-versa
             comodel = model.env[self.comodel_name]
-            invf = comodel._fields[self.inverse_name]
+            try:
+                invf = comodel._fields[self.inverse_name]
+            except Exception as ex:
+                _logger.exception("No inverse field %r found for %r in field %s", self.inverse_name, self.comodel_name, self.name)
+                raise ex
             # In some rare cases, a ``One2many`` field can link to ``Int`` field
             # (res_model/res_id pattern). Only inverse the field if this is
             # a ``Many2one`` field.
@@ -2583,9 +2587,9 @@ class Id(Field):
         # the code below is written to make record.id as quick as possible
         ids = record._ids
         size = len(ids)
-        if size is 0:
+        if size == 0:
             return False
-        elif size is 1:
+        elif size == 1:
             return ids[0]
         raise ValueError("Expected singleton: %s" % record)
 

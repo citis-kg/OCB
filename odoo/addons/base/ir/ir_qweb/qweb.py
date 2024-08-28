@@ -16,7 +16,7 @@ from psycopg2.extensions import TransactionRollbackError
 import werkzeug
 from werkzeug.utils import escape as _escape
 
-from odoo.tools import pycompat, freehash
+from odoo.tools import pycompat, freehash, wrap_values
 
 try:
     import builtins
@@ -342,6 +342,7 @@ class QWeb(object):
             log = {'last_path_node': None}
             new = self.default_values()
             new.update(values)
+            wrap_values(new)
             try:
                 return compiled(self, append, new, options, log)
             except (QWebException, TransactionRollbackError) as e:
@@ -557,9 +558,13 @@ class QWeb(object):
                 arg(arg='log', annotation=None),
             ], defaults=[], vararg=None, kwarg=None, posonlyargs=[], kwonlyargs=[], kw_defaults=[]),
             body=body or [ast.Return()],
-            decorator_list=[])
-        if lineno is not None:
-            fn.lineno = lineno
+            decorator_list=[],
+        )
+        # # CITIS: fix for python 3.11, tutup code lineno assignment ini
+        #   fix error: ValueError: AST node line range (3, 1) is not valid
+        # if lineno is not None:
+        #     _logger.info(f'citdebug: qweb lineno: {lineno}')
+        #     fn.lineno = lineno
 
         options['ast_calls'].append(fn)
 
@@ -612,11 +617,13 @@ class QWeb(object):
                         ast.Compare(
                             left=ast.Name(id='content', ctx=ast.Load()),
                             ops=[ast.IsNot()],
+                            # comparators=[ast.Name(id='None', ctx=ast.Load())]
                             comparators=[ast.Constant(None)]
                         ),
                         ast.Compare(
                             left=ast.Name(id='content', ctx=ast.Load()),
                             ops=[ast.IsNot()],
+                            # comparators=[ast.Name(id='False', ctx=ast.Load())]
                             comparators=[ast.Constant(False)]
                         )
                     ]
@@ -1246,6 +1253,7 @@ class QWeb(object):
                         keywords=[], starargs=None, kwargs=None
                     ),
                     self._compile_expr0(expression),
+                    # ast.Name(id='None', ctx=ast.Load()),
                     ast.Constant(None),
                 ], ctx=ast.Load())
             )

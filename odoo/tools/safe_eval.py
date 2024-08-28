@@ -24,9 +24,8 @@ import logging
 import sys
 import werkzeug
 
-from . import pycompat
 from .misc import ustr
-from . import pycompat
+from . import pycompat, wrap_values
 
 import odoo
 
@@ -69,6 +68,7 @@ _CONST_OPCODES = set(opmap[x] for x in [
     'BUILD_LIST', 'BUILD_MAP', 'BUILD_TUPLE', 'BUILD_SET',
     # 3.6: literal map with constant keys https://bugs.python.org/issue27140
     'BUILD_CONST_KEY_MAP',
+    'LIST_EXTEND',
     # until Python 3.5, literal maps are compiled to creating an empty map
     # (pre-sized) then filling it key by key
     'STORE_MAP',
@@ -90,6 +90,11 @@ _EXPR_OPCODES = _CONST_OPCODES.union(set(opmap[x] for x in [
     # comprehensions
     'LIST_APPEND', 'MAP_ADD', 'SET_ADD',
     'COMPARE_OP',
+    # specialised comparisons
+    'CONTAINS_OP',
+    'DICT_MERGE',
+    # py39
+    'IS_OP', 'DICT_MERGE', 'SET_UPDATE', 'DICT_UPDATE',
 ] if x in opmap))
 
 _SAFE_OPCODES = _EXPR_OPCODES.union(set(opmap[x] for x in [
@@ -112,8 +117,12 @@ _SAFE_OPCODES = _EXPR_OPCODES.union(set(opmap[x] for x in [
     'LOAD_FAST', 'STORE_FAST', 'DELETE_FAST', 'UNPACK_SEQUENCE',
     'LOAD_GLOBAL', # Only allows access to restricted globals
     # CITIS: fix for python 3.11
+    'RERAISE', 'JUMP_IF_NOT_EXC_MATCH',
     'RESUME', 'PUSH_NULL', 'CALL', 'PRECALL',
     'POP_JUMP_FORWARD_IF_FALSE', 'CONTAINS_OP', 'LIST_EXTEND',
+    'BINARY_OP', 'MAT_VALUE', 'BUILD_STRING', 'FORMAT_VALUE',
+    'GEN_START',  # added in 3.10
+    'KW_NAMES', 'JUMP_BACKWARD'
 ] if x in opmap))
 
 _logger = logging.getLogger(__name__)

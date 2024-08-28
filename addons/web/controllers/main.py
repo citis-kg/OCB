@@ -22,6 +22,7 @@ import time
 import zlib
 
 import werkzeug
+import werkzeug.exceptions
 import werkzeug.utils
 import werkzeug.wrappers
 import werkzeug.wsgi
@@ -36,6 +37,7 @@ import odoo.modules.registry
 from odoo.api import call_kw, Environment
 from odoo.modules import get_resource_path
 from odoo.tools import crop_image, topological_sort, html_escape, pycompat
+from odoo.tools.mimetypes import guess_mimetype
 from odoo.tools.translate import _
 from odoo.tools.misc import str2bool, xlwt, file_open
 from odoo.tools.safe_eval import safe_eval
@@ -71,6 +73,7 @@ db_list = http.db_list
 
 db_monodb = http.db_monodb
 
+def clean(name): return name.replace('\x3c', '')
 def serialize_exception(f):
     @functools.wraps(f)
     def wrap(*args, **kwargs):
@@ -96,9 +99,8 @@ def redirect_with_hash(*args, **kw):
     return http.redirect_with_hash(*args, **kw)
 
 def abort_and_redirect(url):
-    r = request.httprequest
     response = werkzeug.utils.redirect(url, 302)
-    response = r.app.get_response(r, response, explicit_session=False)
+    response = http.root.get_response(request.httprequest, response, explicit_session=False)
     werkzeug.exceptions.abort(response)
 
 def ensure_db(redirect='/web/database/selector'):
@@ -178,11 +180,11 @@ def module_installed_bypass_session(dbname):
     return {}
 
 def module_boot(db=None):
-    server_wide_modules = odoo.conf.server_wide_modules or ['web']
-    serverside = []
+    server_wide_modules = odoo.conf.server_wide_modules or []
+    serverside = ['base', 'web']
     dbside = []
     for i in server_wide_modules:
-        if i in http.addons_manifest:
+        if i in http.addons_manifest and i not in serverside:
             serverside.append(i)
     monodb = db or db_monodb()
     if monodb:
@@ -219,7 +221,10 @@ def concat_xml(file_list):
         #elif root.tag != xml.tag:
         #    raise ValueError("Root tags missmatch: %r != %r" % (root.tag, xml.tag))
 
-        for child in xml.getchildren():
+        # # CITIS: fix for python 3.11: getchildren was removed since 3.9
+        # for child in xml.getchildren():
+        #     root.append(child)
+        for child in list(xml):
             root.append(child)
     return ElementTree.tostring(root, 'utf-8'), checksum.hexdigest()
 
@@ -450,6 +455,9 @@ class Home(http.Controller):
 
         request.uid = request.session.uid
         try:
+            # TODO: cek action only --> versus securitynya
+            if kw.get('action'):
+                pass
             context = request.env['ir.http'].webclient_rendering_context()
             response = request.render('web.webclient_bootstrap', qcontext=context)
             response.headers['X-Frame-Options'] = 'DENY'
