@@ -1100,7 +1100,11 @@ class AccountMoveLine(models.Model):
             if (line.account_id.internal_type in ('receivable', 'payable')):
                 partners.add(line.partner_id.id)
             if (line.matched_debit_ids or line.matched_credit_ids) and line.reconciled:
-                raise UserError(_('You are trying to reconcile some entries that are already reconciled!'))
+                raise UserError(
+                    f'You are trying to reconcile some entries that are already reconciled!\n'
+                    f'Journal Entry: {line.move_id.name}\n'
+                    f'Line info: ID: {line.id}, name: {line.name} {line.balance:,.2f}, ')
+                # raise UserError(_('You are trying to reconcile some entries that are already reconciled!'))
         if len(company_ids) > 1:
             raise UserError(_('To reconcile the entries company should be the same for all entries!'))
         if len(set(all_accounts)) > 1:
