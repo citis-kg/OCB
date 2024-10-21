@@ -506,7 +506,10 @@ class Field(MetaField('DummyField', (object,), {})):
         # determine the chain of fields, and make sure they are all set up
         target = model
         for name in self.related:
-            field = target._fields[name]
+            try:
+                field = target._fields[name]
+            except Exception as ex:
+                raise ValueError("Field %s: related field %s not found" % (self, '.'.join(self.related))) from ex
             field.setup_full(target)
             target = target[name]
 
