@@ -294,8 +294,8 @@ var AbstractWebClient = Widget.extend(mixins.ServiceProvider, {
     // --------------------------------------------------------------
     on_connection_lost: function () {
         this.connection_notification = this.notification_manager.notify(
-            _t('Connection lost'),
-            _t('Trying to reconnect...'),
+            _t('Client/Browser: Connection lost'),
+            _t('Trying to reconnect...(Ignore this message if you are processing large data, please wait until it is finished)'),
             true
         );
     },
