@@ -90,8 +90,9 @@ def convert_column(cr, tablename, columnname, columntype):
         with cr.savepoint():
             cr.execute('ALTER TABLE "{}" ALTER COLUMN "{}" TYPE {}'.format(tablename, columnname, columntype),
                        log_exceptions=False)
-    except psycopg2.NotSupportedError:
+    except psycopg2.NotSupportedError as ex:
         # can't do inplace change -> use a casted temp column
+        _schema.error(f"citerror: convert_column: {tablename}.{columnname} to {columntype}; error {ex}")
         query = '''
             ALTER TABLE "{0}" RENAME COLUMN "{1}" TO __temp_type_cast;
             ALTER TABLE "{0}" ADD COLUMN "{1}" {2};
