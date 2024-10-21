@@ -2299,6 +2299,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         foreign_key_re = re.compile(r'\s*foreign\s+key\b.*', re.I)
 
         def cons_text(txt):
+            # CITIS: remove additional char / text when compare sql constraints
+            txt = (txt.replace("(", "").replace(")", "").replace(" ", "")
+                                    .replace("::text", "").replace("::numeric", "").replace("<>", "!="))
             return txt.lower().replace(', ',',').replace(' (','(')
 
         def process(key, definition):
@@ -2635,7 +2638,11 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
         # fetch stored fields from the database to the cache; this should feed
         # the prefetching of secondary records
-        self._read_from_database(stored, inherited)
+        try:
+            self._read_from_database(stored, inherited)
+        except Exception as ex:
+            _logger.error("%s.read() for field '%s' error %s", self._name, name, str(ex))
+            raise ex
 
         # retrieve results from records; this takes values from the cache and
         # computes remaining fields
@@ -2701,6 +2708,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         except AccessError:
             # not all prefetched records may be accessible, try with only the current recordset
             result = self.read([f.name for f in fs], load='_classic_write')
+        except Exception as ex:
+            _logger.warning(f'Faield to read field {field}, on _prefetch_field, error : {str(ex)}')
+            raise  ex
 
         # check the cache, and update it if necessary
         if not self.env.cache.contains_value(self, field):
@@ -2762,7 +2772,11 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         param_pos = params.index(param_ids)
         for sub_ids in cr.split_for_in_conditions(self.ids):
             params[param_pos] = tuple(sub_ids)
-            cr.execute(query_str, params)
+            try:
+                cr.execute(query_str, params)
+            except Exception as ex:
+                _logger.debug(f"citdebug: {params} in query: {query_str}")
+                raise ex
             for row in cr.fetchall():
                 for values, val in pycompat.izip(field_values_list, row):
                     values.append(val)
