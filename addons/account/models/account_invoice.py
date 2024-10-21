@@ -110,6 +110,11 @@ class AccountInvoice(models.Model):
         residual_company_signed = 0.0
         sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
         for line in self._get_aml_for_amount_residual():
+            if not line.company_id:
+                _logger.exception(f'citdebug: Company_id is empty for line %s, Company: %', line.id, line.company_id)
+                # fix bug line.company_id empty for some user, line.company_id.currency_id.round will return 0
+                line_vals = line.read()  # force reload data from db
+                _logger.exception(f'citdebug: Company_id : %s %s', line.id, line.company_id)
             residual_company_signed += line.amount_residual
             if line.currency_id == self.currency_id:
                 residual += line.amount_residual_currency if line.currency_id else line.amount_residual
@@ -1282,6 +1287,9 @@ class AccountInvoice(models.Model):
         """
         result = []
         for line in lines:
+            if not line.account_id:
+                # Force read to ensure the record is loaded (bug m2one account_id 0 when creating refund)
+                line_vals = line.read()
             values = {}
             for name, field in line._fields.items():
                 if name in MAGIC_COLUMNS:
