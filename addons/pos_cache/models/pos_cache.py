@@ -29,7 +29,7 @@ class pos_cache(models.Model):
                                          lang=self.compute_user_id.lang)
         res = prod_ctx.read(self.get_product_fields())
         datas = {
-            'cache': base64.encodestring(json.dumps(res).encode('utf-8')),
+            'cache': base64.encodebytes(json.dumps(res).encode('utf-8')),
         }
 
         self.write(datas)

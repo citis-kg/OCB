@@ -226,7 +226,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         with open(abs_filepath, 'rb') as fn:
             self.write({
                 'msg': msg,
-                'file_export': base64.encodestring(fn.read()),
+                'file_export': base64.encodebytes(fn.read()),
             })
 
         # update the history record:
