@@ -68,16 +68,16 @@ class TestAccountCustomerInvoice(AccountTestUsers):
         total_before_confirm = self.partner3.total_invoiced
 
         # I check that Initially customer invoice is in the "Draft" state
-        self..assertEqual(self.account_invoice_customer0.state, 'draft')
+        self.assertEqual(self.account_invoice_customer0.state, 'draft')
 
         # I check that there is no move attached to the invoice
-        self..assertEqual(len(self.account_invoice_customer0.move_id), 0)
+        self.assertEqual(len(self.account_invoice_customer0.move_id), 0)
 
         # I validate invoice by creating on
         self.account_invoice_customer0.action_invoice_open()
 
         # I check that the invoice state is "Open"
-        self..assertEqual(self.account_invoice_customer0.state, 'open')
+        self.assertEqual(self.account_invoice_customer0.state, 'open')
 
         # I check that now there is a move attached to the invoice
         assert self.account_invoice_customer0.move_id, "Move not created for open invoice"
@@ -89,7 +89,7 @@ class TestAccountCustomerInvoice(AccountTestUsers):
         assert (self.account_invoice_customer0.state == 'paid'), "Invoice is not in Paid state"
 
         total_after_confirm = self.partner3.total_invoiced
-        self..assertEqual(total_after_confirm - total_before_confirm, self.account_invoice_customer0.amount_untaxed_signed)
+        self.assertEqual(total_after_confirm - total_before_confirm, self.account_invoice_customer0.amount_untaxed_signed)
 
         # I created a credit note Using Add Credit Note Button
         invoice_refund_obj = self.env['account.invoice.refund']
@@ -163,7 +163,7 @@ class TestAccountCustomerInvoice(AccountTestUsers):
             invoice_line_ids=invoice_line_data
         ))
 
-        self..assertEqual(invoice.amount_untaxed, sum([x.base for x in invoice.tax_line_ids]))
+        self.assertEqual(invoice.amount_untaxed, sum([x.base for x in invoice.tax_line_ids]))
 
     def test_customer_invoice_tax_refund(self):
         company = self.env.user.company_id

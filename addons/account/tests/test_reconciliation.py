@@ -106,12 +106,12 @@ class TestReconciliation(AccountingTestCase):
 
     def check_results(self, move_line_recs, aml_dict):
         #we check that the line is balanced (bank statement line)
-        self..assertEqual(len(move_line_recs), len(aml_dict))
+        self.assertEqual(len(move_line_recs), len(aml_dict))
         for move_line in move_line_recs:
-            self..assertEqual(round(move_line.debit, 2), aml_dict[move_line.account_id.id]['debit'])
-            self..assertEqual(round(move_line.credit, 2), aml_dict[move_line.account_id.id]['credit'])
-            self..assertEqual(round(move_line.amount_currency, 2), aml_dict[move_line.account_id.id]['amount_currency'])
-            self..assertEqual(move_line.currency_id.id, aml_dict[move_line.account_id.id]['currency_id'])
+            self.assertEqual(round(move_line.debit, 2), aml_dict[move_line.account_id.id]['debit'])
+            self.assertEqual(round(move_line.credit, 2), aml_dict[move_line.account_id.id]['credit'])
+            self.assertEqual(round(move_line.amount_currency, 2), aml_dict[move_line.account_id.id]['amount_currency'])
+            self.assertEqual(move_line.currency_id.id, aml_dict[move_line.account_id.id]['currency_id'])
             if 'currency_diff' in aml_dict[move_line.account_id.id]:
                 currency_diff_move = move_line.full_reconcile_id.exchange_move_id
                 self.assertTrue(currency_diff_move, 'The full reconciliation should have created an exchange rate journal entry')
@@ -264,11 +264,11 @@ class TestReconciliation(AccountingTestCase):
         })
 
         # The invoice should be paid, as the payments totally cover its total
-        self..assertEqual(invoice_record.state, 'paid', 'The invoice should be paid by now')
+        self.assertEqual(invoice_record.state, 'paid', 'The invoice should be paid by now')
         invoice_rec_line = invoice_record.move_id.line_ids.filtered(lambda x: x.account_id.reconcile)
         self.assertTrue(invoice_rec_line.reconciled, 'The invoice should be totally reconciled')
-        self..assertEqual(invoice_rec_line.amount_residual, 0, 'The invoice should be totally reconciled')
-        self..assertEqual(invoice_rec_line.amount_residual_currency, 0, 'The invoice should be totally reconciled')
+        self.assertEqual(invoice_rec_line.amount_residual, 0, 'The invoice should be totally reconciled')
+        self.assertEqual(invoice_rec_line.amount_residual_currency, 0, 'The invoice should be totally reconciled')
 
     @unittest.skip('adapt to new accounting')
     def test_balanced_exchanges_gain_loss(self):
@@ -333,7 +333,7 @@ class TestReconciliation(AccountingTestCase):
             ])
 
         # The invoice should be paid, as the payments totally cover its total
-        self..assertEqual(invoice.state, 'paid', 'The invoice should be paid by now')
+        self.assertEqual(invoice.state, 'paid', 'The invoice should be paid by now')
         reconcile = None
         for payment in invoice.payment_ids:
             reconcile = payment.reconcile_id
@@ -353,8 +353,8 @@ class TestReconciliation(AccountingTestCase):
         self.assertTrue(exchange_loss_line, 'There should be one move line of 0.01 EUR in credit')
         # The journal items of the reconciliation should have their debit and credit total equal
         # Besides, the total debit and total credit should be 60.61 EUR (2.00 USD)
-        self..assertEqual(sum(res['debit'] for res in result.values()), 60.61)
-        self..assertEqual(sum(res['credit'] for res in result.items()), 60.61)
+        self.assertEqual(sum(res['debit'] for res in result.values()), 60.61)
+        self.assertEqual(sum(res['credit'] for res in result.items()), 60.61)
         counterpart_exchange_loss_line = None
         for line in exchange_loss_line.move_id.line_id:
             if line.account_id.id == self.account_fx_expense_id:
@@ -399,8 +399,8 @@ class TestReconciliation(AccountingTestCase):
         wizard.trans_rec_reconcile_full()
         for aml in aml_recs:
             self.assertTrue(aml.reconciled, 'The journal item should be totally reconciled')
-            self..assertEqual(aml.amount_residual, 0, 'The journal item should be totally reconciled')
-            self..assertEqual(aml.amount_residual_currency, 0, 'The journal item should be totally reconciled')
+            self.assertEqual(aml.amount_residual, 0, 'The journal item should be totally reconciled')
+            self.assertEqual(aml.amount_residual_currency, 0, 'The journal item should be totally reconciled')
 
         move_list_vals = [
             ('2', 728.35, 795.05, self.currency_swiss_id),
@@ -417,8 +417,8 @@ class TestReconciliation(AccountingTestCase):
         wizard.trans_rec_reconcile()
         for aml in aml_recs:
             self.assertTrue(aml.reconciled, 'The journal item should be totally reconciled')
-            self..assertEqual(aml.amount_residual, 0, 'The journal item should be totally reconciled')
-            self..assertEqual(aml.amount_residual_currency, 0, 'The journal item should be totally reconciled')
+            self.assertEqual(aml.amount_residual, 0, 'The journal item should be totally reconciled')
+            self.assertEqual(aml.amount_residual_currency, 0, 'The journal item should be totally reconciled')
 
     def test_manual_reconcile_wizard_same_account(self):
         move_ids = self.env['account.move']
@@ -477,7 +477,7 @@ class TestReconciliation(AccountingTestCase):
                 }
         writeoff_line = account_move_line._create_writeoff(writeoff_vals)
         (account_move_line + writeoff_line).reconcile()
-        self..assertEqual(len(writeoff_line), 1, "The writeoff_line (balance_line) should have only one moves line")
+        self.assertEqual(len(writeoff_line), 1, "The writeoff_line (balance_line) should have only one moves line")
         self.assertTrue(all(l.reconciled for l in writeoff_line), 'The balance lines should be totally reconciled')
         self.assertTrue(all(l.reconciled for l in account_move_line), 'The move lines should be totally reconciled')
 
@@ -531,7 +531,7 @@ class TestReconciliation(AccountingTestCase):
         # Check that move lines associated to bank_statement are correct
         bank_stmt_aml = self.env['account.move.line'].search([('statement_id', '=', bank_stmt.id)])
         bank_stmt_aml |= bank_stmt_aml.mapped('move_id').mapped('line_ids')
-        self..assertEqual(len(bank_stmt_aml), 4, "The bank statement should have 4 moves lines")
+        self.assertEqual(len(bank_stmt_aml), 4, "The bank statement should have 4 moves lines")
         lines = {
             self.account_usd.id: [
                 {'debit': 3.27, 'credit': 0.0, 'amount_currency': 5, 'currency_id': self.currency_usd_id},
@@ -556,10 +556,10 @@ class TestReconciliation(AccountingTestCase):
                     line = line[0]
                 else:
                     line = line[1]
-            self..assertEqual(round(aml.debit, 2), line['debit'])
-            self..assertEqual(round(aml.credit, 2), line['credit'])
-            self..assertEqual(round(aml.amount_currency, 2), line['amount_currency'])
-            self..assertEqual(aml.currency_id.id, line['currency_id'])
+            self.assertEqual(round(aml.debit, 2), line['debit'])
+            self.assertEqual(round(aml.credit, 2), line['credit'])
+            self.assertEqual(round(aml.amount_currency, 2), line['amount_currency'])
+            self.assertEqual(aml.currency_id.id, line['currency_id'])
 
     def test_partial_reconcile_currencies_01(self):
         #                client Account (payable, rsa)
@@ -1152,14 +1152,14 @@ class TestReconciliation(AccountingTestCase):
         self.env['account.move.line'].process_reconciliations(data_for_reconciliation)
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
 
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic2(self):
         company = self.env.ref('base.main_company')
@@ -1210,15 +1210,15 @@ class TestReconciliation(AccountingTestCase):
         (inv1_receivable + inv2_receivable + pay_receivable + move_balance_receiv).reconcile()
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
 
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_reconciliation_wizard(self):
         inv1 = self.create_invoice(invoice_amount=800, currency_id=self.currency_euro_id)
@@ -1313,17 +1313,17 @@ class TestReconciliation(AccountingTestCase):
         (inv1_receivable + inv2_receivable + pay_receivable + move_balance_receiv).reconcile()
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
 
         self.assertFalse(inv1_receivable.full_reconcile_id.exchange_move_id)
 
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic4(self):
         """
@@ -1398,9 +1398,9 @@ class TestReconciliation(AccountingTestCase):
         (inv1_receivable + inv2_receivable + pay_receivable + move_balance_receiv).reconcile()
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, pay_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, move_balance_receiv.full_reconcile_id)
 
         exchange_rcv = inv1_receivable.full_reconcile_id.exchange_move_id.line_ids.filtered(lambda l: l.account_id.internal_type == 'receivable')
         self.assertEqual(exchange_rcv.amount_currency, 72.77)
@@ -1408,8 +1408,8 @@ class TestReconciliation(AccountingTestCase):
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic5(self):
         """
@@ -1471,16 +1471,16 @@ class TestReconciliation(AccountingTestCase):
         self.assertEqual(payment_receivable.balance, -350)
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
 
         self.assertFalse(inv1_receivable.full_reconcile_id.exchange_move_id)
 
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic6(self):
         """
@@ -1546,8 +1546,8 @@ class TestReconciliation(AccountingTestCase):
         payment_receivable = payment.move_line_ids.filtered(lambda l: l.account_id.internal_type == 'receivable')
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
-        self..assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, inv2_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
 
         exchange_rcv = inv1_receivable.full_reconcile_id.exchange_move_id.line_ids.filtered(lambda l: l.account_id.internal_type == 'receivable')
         self.assertEqual(exchange_rcv.amount_currency, 0.01)
@@ -1555,8 +1555,8 @@ class TestReconciliation(AccountingTestCase):
         self.assertTrue(inv1.reconciled)
         self.assertTrue(inv2.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
-        self..assertEqual(inv2.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv2.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic7(self):
         """
@@ -1609,13 +1609,13 @@ class TestReconciliation(AccountingTestCase):
         payment_receivable = payment.move_line_ids.filtered(lambda l: l.account_id.internal_type == 'receivable')
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
 
         self.assertFalse(inv1_receivable.full_reconcile_id.exchange_move_id)
 
         self.assertTrue(inv1.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')
 
     def test_inv_refund_foreign_payment_writeoff_domestic8(self):
         """
@@ -1674,11 +1674,11 @@ class TestReconciliation(AccountingTestCase):
         (inv1_receivable + payment_receivable + move_balance_receiv).reconcile()
 
         self.assertTrue(inv1_receivable.full_reconcile_id.exists())
-        self..assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
+        self.assertEqual(inv1_receivable.full_reconcile_id, payment_receivable.full_reconcile_id)
 
         exchange_rcv = inv1_receivable.full_reconcile_id.exchange_move_id.line_ids.filtered(lambda l: l.account_id.internal_type == 'receivable')
         self.assertEqual(exchange_rcv.amount_currency, 0.01)
 
         self.assertTrue(inv1.reconciled)
 
-        self..assertEqual(inv1.state, 'paid')
+        self.assertEqual(inv1.state, 'paid')

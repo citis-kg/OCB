@@ -70,13 +70,13 @@ class TestStockValuation(TransactionCase):
         move1 = picking1.move_lines[0]
 
         # the unit price of the purchase order line is copied to the in move
-        self..assertEqual(move1.price_unit, 100)
+        self.assertEqual(move1.price_unit, 100)
 
         # update the unit price on the purchase order line
         po1.order_line.price_unit = 200
 
         # the unit price on the stock move is not directly updated
-        self..assertEqual(move1.price_unit, 100)
+        self.assertEqual(move1.price_unit, 100)
 
         # validate the receipt
         res_dict = picking1.button_validate()
@@ -84,9 +84,9 @@ class TestStockValuation(TransactionCase):
         wizard.process()
 
         # the unit price of the stock move has been updated to the latest value
-        self..assertEqual(move1.price_unit, 200)
+        self.assertEqual(move1.price_unit, 200)
 
-        self..assertEqual(self.product1.stock_value, 2000)
+        self.assertEqual(self.product1.stock_value, 2000)
 
     def test_standard_price_change_1(self):
         """ Confirm a purchase order and create the associated receipt, change the unit cost of the
@@ -118,13 +118,13 @@ class TestStockValuation(TransactionCase):
 
         # the move's unit price reflects the purchase order line's cost even if it's useless when
         # the product's cost method is standard
-        self..assertEqual(move1.price_unit, 11)
+        self.assertEqual(move1.price_unit, 11)
 
         # set a new standard price
         self.product1.product_tmpl_id.standard_price = 12
 
         # the unit price on the stock move is not directly updated
-        self..assertEqual(move1.price_unit, 11)
+        self.assertEqual(move1.price_unit, 11)
 
         # validate the receipt
         res_dict = picking1.button_validate()
@@ -132,9 +132,9 @@ class TestStockValuation(TransactionCase):
         wizard.process()
 
         # the unit price of the stock move has been updated to the latest value
-        self..assertEqual(move1.price_unit, 12)
+        self.assertEqual(move1.price_unit, 12)
 
-        self..assertEqual(self.product1.stock_value, 120)
+        self.assertEqual(self.product1.stock_value, 120)
 
     def test_change_currency_rate_average_1(self):
         """ Confirm a purchase order in another currency and create the associated receipt, change

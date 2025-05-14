@@ -65,9 +65,9 @@ class TestACL(TransactionCase):
         form_view = currency.fields_view_get(False, 'form')
         view_arch = etree.fromstring(form_view.get('arch'))
         self.assertNotIn('decimal_places', fields, "'decimal_places' field should be gone")
-        self..assertEqual(view_arch.xpath("//field[@name='decimal_places']"), [],
+        self.assertEqual(view_arch.xpath("//field[@name='decimal_places']"), [],
                           "Field 'decimal_places' must not be found in view definition")
-        self..assertEqual(view_arch.xpath("//label[@for='decimal_places']"), [],
+        self.assertEqual(view_arch.xpath("//label[@for='decimal_places']"), [],
                           "Label for 'decimal_places' must not be found in view definition")
 
         # Make demo user a member of the restricted group and check that the field is back

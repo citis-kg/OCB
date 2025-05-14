@@ -68,15 +68,15 @@ class TestAccountInvoiceRounding(AccountingTestCase):
 
     def _check_invoice_rounding(self, inv, exp_lines_values, exp_tax_values=None):
         inv_lines = inv.invoice_line_ids
-        self..assertEqual(len(inv_lines), len(exp_lines_values))
+        self.assertEqual(len(inv_lines), len(exp_lines_values))
         for i in range(0, len(exp_lines_values)):
-            self..assertEqual(inv_lines[i].price_unit, exp_lines_values[i])
+            self.assertEqual(inv_lines[i].price_unit, exp_lines_values[i])
 
         if exp_tax_values:
             tax_lines = inv.tax_line_ids
-            self..assertEqual(len(tax_lines), len(exp_tax_values))
+            self.assertEqual(len(tax_lines), len(exp_tax_values))
             for i in range(0, len(exp_tax_values)):
-                self..assertEqual(tax_lines[i].amount_total, exp_tax_values[i])
+                self.assertEqual(tax_lines[i].amount_total, exp_tax_values[i])
 
     def test_rounding_add_invoice_line(self):
         self._check_invoice_rounding(

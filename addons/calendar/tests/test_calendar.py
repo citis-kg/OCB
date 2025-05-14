@@ -159,7 +159,7 @@ class TestCalendar(TransactionCase):
             (m.start_datetime, m.stop_datetime),
             (u'2017-07-12 14:30:00', u'2017-07-12 15:00:00'),
         )
-        self..assertEqual(
+        self.assertEqual(
             (records.start_datetime, records.stop_datetime),
             (u'2017-07-10 15:30:00', u'2017-07-10 16:00:00'),
         )

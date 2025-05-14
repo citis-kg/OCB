@@ -81,13 +81,13 @@ class TestCheckJournalEntry(TransactionCase):
 
     def test_journal_entry(self):
         # Submitted to Manager
-        self..assertEqual(self.expense.state, 'submit', 'Expense is not in Reported state')
+        self.assertEqual(self.expense.state, 'submit', 'Expense is not in Reported state')
         # Approve
         self.expense.approve_expense_sheets()
-        self..assertEqual(self.expense.state, 'approve', 'Expense is not in Approved state')
+        self.assertEqual(self.expense.state, 'approve', 'Expense is not in Approved state')
         # Create Expense Entries
         self.expense.action_sheet_move_create()
-        self..assertEqual(self.expense.state, 'post', 'Expense is not in Waiting Payment state')
+        self.assertEqual(self.expense.state, 'post', 'Expense is not in Waiting Payment state')
         self.assertTrue(self.expense.account_move_id.id, 'Expense Journal Entry is not created')
 
         # [(line.debit, line.credit, line.tax_line_id.id) for line in self.expense.expense_line_ids.account_move_id.line_ids]
@@ -116,9 +116,9 @@ class TestCheckJournalEntry(TransactionCase):
 
         expense = self.env['hr.expense'].message_new(message_parsed)
 
-        self..assertEqual(expense.product_id, self.product)
-        self..assertEqual(expense.tax_ids.ids, [self.tax.id])
-        self..assertEqual(expense.total_amount, 10863.60)
+        self.assertEqual(expense.product_id, self.product)
+        self.assertEqual(expense.tax_ids.ids, [self.tax.id])
+        self.assertEqual(expense.total_amount, 10863.60)
         self.assertTrue(expense.employee_id in user_demo.employee_ids)
 
     def test_partial_payment_multiexpense(self):
@@ -130,7 +130,7 @@ class TestCheckJournalEntry(TransactionCase):
         self.expense.action_sheet_move_create()
         exp_move_lines = self.expense.account_move_id.line_ids
         payable_move_lines = exp_move_lines.filtered(lambda l: l.account_id.internal_type == 'payable')
-        self..assertEqual(len(payable_move_lines), 2)
+        self.assertEqual(len(payable_move_lines), 2)
 
         WizardRegister = self.env['hr.expense.sheet.register.payment.wizard'].with_context(active_ids=self.expense.ids)
 
@@ -143,7 +143,7 @@ class TestCheckJournalEntry(TransactionCase):
 
         exp_move_lines = self.expense.account_move_id.line_ids
         payable_move_lines = exp_move_lines.filtered(lambda l: l.account_id.internal_type == 'payable')
-        self..assertEqual(len(payable_move_lines.filtered(lambda l: l.reconciled)), 1)
+        self.assertEqual(len(payable_move_lines.filtered(lambda l: l.reconciled)), 1)
 
         register_pay2 = WizardRegister.create({
             'journal_id': self.bank_journal.id,
@@ -153,7 +153,7 @@ class TestCheckJournalEntry(TransactionCase):
         register_pay2.expense_post_payment()
         exp_move_lines = self.expense.account_move_id.line_ids
         payable_move_lines = exp_move_lines.filtered(lambda l: l.account_id.internal_type == 'payable')
-        self..assertEqual(len(payable_move_lines.filtered(lambda l: l.reconciled)), 2)
+        self.assertEqual(len(payable_move_lines.filtered(lambda l: l.reconciled)), 2)
 
         full_reconcile = payable_move_lines.mapped('full_reconcile_id')
-        self..assertEqual(len(full_reconcile), 1)
+        self.assertEqual(len(full_reconcile), 1)

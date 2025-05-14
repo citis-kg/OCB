@@ -1592,7 +1592,7 @@ class TestStockFlow(TestStockCommon):
             'location_dest_id': self.customer_location})
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self..assertEqual(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
         # receive one product in stock
         inventory = self.env['stock.inventory'].create({
@@ -1608,9 +1608,9 @@ class TestStockFlow(TestStockCommon):
         inventory.action_done()
         # recheck availability of the delivery order, it should be assigned
         picking_out.action_assign()
-        self..assertEqual(len(picking_out.move_lines), 1.0)
-        self..assertEqual(picking_out.move_lines.product_qty, 2.0)
-        self..assertEqual(picking_out.state, "assigned")
+        self.assertEqual(len(picking_out.move_lines), 1.0)
+        self.assertEqual(picking_out.move_lines.product_qty, 2.0)
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_71_picking_state_all_at_once_force_assign(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1641,11 +1641,11 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self..assertEqual(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
         # force assign on the delivery order, it should be assigned
         picking_out.force_assign()
-        self..assertEqual(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_72_picking_state_partial_reserve(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1689,7 +1689,7 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in partially available
         picking_out.action_assign()
-        self..assertEqual(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
         # receive one product in stock
         inventory = self.env['stock.inventory'].create({
@@ -1706,7 +1706,7 @@ class TestStockFlow(TestStockCommon):
 
         # recheck availability of the delivery order, it should be assigned
         picking_out.action_assign()
-        self..assertEqual(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_73_picking_state_partial_force_assign(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1736,11 +1736,11 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self..assertEqual(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
         # force assign on the delivery order, it should be assigned
         picking_out.force_assign()
-        self..assertEqual(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_74_move_state_waiting_mto(self):
         """ This test will check that when a move is unreserved, its state changes to 'waiting' if
@@ -1796,6 +1796,6 @@ class TestStockFlow(TestStockCommon):
         move_with_ancestors._do_unreserve()
         other_move._do_unreserve()
 
-        self..assertEqual(move_mto_alone.state, "draft")
-        self..assertEqual(move_with_ancestors.state, "waiting")
-        self..assertEqual(other_move.state, "confirmed")
+        self.assertEqual(move_mto_alone.state, "draft")
+        self.assertEqual(move_with_ancestors.state, "waiting")
+        self.assertEqual(other_move.state, "confirmed")

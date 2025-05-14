@@ -138,22 +138,22 @@ class TestSaleTimesheet(TestSale):
         })
 
         # check we don't compare apples and pears
-        self..assertEqual(timesheet1.company_currency_id, sale_order.currency_id, 'Currencies should not differ (%s vs %s)' % (timesheet1.company_currency_id.name, sale_order.currency_id.name))
+        self.assertEqual(timesheet1.company_currency_id, sale_order.currency_id, 'Currencies should not differ (%s vs %s)' % (timesheet1.company_currency_id.name, sale_order.currency_id.name))
         # check theorical revenue
-        self..assertEqual(timesheet1.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
-        self..assertEqual(timesheet2.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
-        self..assertEqual(timesheet3.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
-        self..assertEqual(timesheet1.timesheet_invoice_id, self.env['account.invoice'])
-        self..assertEqual(timesheet2.timesheet_invoice_id, self.env['account.invoice'])
-        self..assertEqual(timesheet3.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet1.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
+        self.assertEqual(timesheet2.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
+        self.assertEqual(timesheet3.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
+        self.assertEqual(timesheet1.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet2.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet3.timesheet_invoice_id, self.env['account.invoice'])
         # Hours * SO Line price_unit * (1-discount)
-        self..assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
         # MIN (
         #   2 * 90 * (1 - 0.0) = 180
         #   (12 * 90) - 450 = 1080
         # )
-        self..assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
 
         # invoice the SO
         context = {
@@ -170,9 +170,9 @@ class TestSaleTimesheet(TestSale):
         invoice = self.env['account.invoice'].browse(invoice_id)
 
         # check revenues have not changed
-        self..assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
 
         # update invoice line by setting a reduction, then validate it
         for invoice_line in invoice.invoice_line_ids:
@@ -183,15 +183,15 @@ class TestSaleTimesheet(TestSale):
         # (Total inv line / SUM(uninvoiced timesheet for delivered service) ) * timesheet line hours, so
         # (560 / 7 )* 5 = 400
         # (560 / 7) * 2 = 160
-        self..assertEqual(timesheet1.timesheet_revenue, 400, "Revenue computation on invoice validation does not return the correct revenue !")
-        self..assertEqual(timesheet2.timesheet_revenue, 160, "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(timesheet1.timesheet_revenue, 400, "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(timesheet2.timesheet_revenue, 160, "Revenue computation on invoice validation does not return the correct revenue !")
         # Since their is only one line, the total invoice line is set as revenue for ordered service
-        self..assertEqual(timesheet3.timesheet_revenue, 287, "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(timesheet3.timesheet_revenue, 287, "Revenue computation on invoice validation does not return the correct revenue !")
 
         # check the invoice is well set
-        self..assertEqual(timesheet1.timesheet_invoice_id, invoice)
-        self..assertEqual(timesheet2.timesheet_invoice_id, invoice)
-        self..assertEqual(timesheet3.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet1.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet2.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet3.timesheet_invoice_id, invoice)
 
         # check that analytic line for product 'delivery' cannot be altered
         with self.assertRaises(UserError):
@@ -200,7 +200,7 @@ class TestSaleTimesheet(TestSale):
 
         # check that analytic line for product 'ordered' can be altered
         timesheet3.write(dict(unit_amount=10))
-        self..assertEqual(timesheet3.unit_amount, 10)
+        self.assertEqual(timesheet3.unit_amount, 10)
 
         # check that if at least 1 analytic line is for product 'delivery', it cannot be altered
         with self.assertRaises(UserError):
@@ -271,18 +271,18 @@ class TestSaleTimesheet(TestSale):
 
         # check theorical revenue
         # Note: conversion from EUR to USD is  *1.2833309567944147
-        self..assertEqual(timesheet1.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
-        self..assertEqual(timesheet2.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
-        self..assertEqual(timesheet3.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
-        self..assertEqual(timesheet4.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
-        self..assertEqual(timesheet1.timesheet_invoice_id, self.env['account.invoice'])
-        self..assertEqual(timesheet2.timesheet_invoice_id, self.env['account.invoice'])
-        self..assertEqual(timesheet3.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet1.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
+        self.assertEqual(timesheet2.timesheet_invoice_type, 'billable_time', "Billable type on task from delivered service should be 'billabe time'")
+        self.assertEqual(timesheet3.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
+        self.assertEqual(timesheet4.timesheet_invoice_type, 'billable_fixed', "Billable type on task from ordered service should be 'billabe fixed'")
+        self.assertEqual(timesheet1.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet2.timesheet_invoice_id, self.env['account.invoice'])
+        self.assertEqual(timesheet3.timesheet_invoice_id, self.env['account.invoice'])
         # Same computation as the test below, since revenue is stored in company currency
-        self..assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
-        self..assertEqual(timesheet4.timesheet_revenue, 204, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet1.timesheet_revenue, 450, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet2.timesheet_revenue, 180, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet3.timesheet_revenue, 153, "Revenue computation does not return the correct amount !")
+        self.assertEqual(timesheet4.timesheet_revenue, 204, "Revenue computation does not return the correct amount !")
 
         # invoice the SO
         context = {
@@ -304,12 +304,12 @@ class TestSaleTimesheet(TestSale):
         invoice.action_invoice_open()
 
         # check concrete revenue
-        self..assertEqual(float_repr(timesheet1.timesheet_revenue, precision_digits=2), '385.85', "Revenue computation on invoice validation does not return the correct revenue !")
-        self..assertEqual(float_repr(timesheet2.timesheet_revenue, precision_digits=2), '154.35', "Revenue computation on invoice validation does not return the correct revenue !")
-        self..assertEqual(float_repr(timesheet3.timesheet_revenue, precision_digits=2), '114.50', "Revenue computation on invoice validation does not return the correct revenue !")
-        self..assertEqual(float_repr(timesheet4.timesheet_revenue, precision_digits=2), '152.68', "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(float_repr(timesheet1.timesheet_revenue, precision_digits=2), '385.85', "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(float_repr(timesheet2.timesheet_revenue, precision_digits=2), '154.35', "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(float_repr(timesheet3.timesheet_revenue, precision_digits=2), '114.50', "Revenue computation on invoice validation does not return the correct revenue !")
+        self.assertEqual(float_repr(timesheet4.timesheet_revenue, precision_digits=2), '152.68', "Revenue computation on invoice validation does not return the correct revenue !")
 
         # check the invoice is well set
-        self..assertEqual(timesheet1.timesheet_invoice_id, invoice)
-        self..assertEqual(timesheet2.timesheet_invoice_id, invoice)
-        self..assertEqual(timesheet3.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet1.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet2.timesheet_invoice_id, invoice)
+        self.assertEqual(timesheet3.timesheet_invoice_id, invoice)

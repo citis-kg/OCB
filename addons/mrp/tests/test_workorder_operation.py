@@ -346,8 +346,8 @@ class TestWorkOrderProcess(common.TransactionCase):
 
         charger_done_move = mo_custom_laptop.move_raw_ids.filtered(lambda x: x.product_id.id == product_charger.id and x.state == 'done')
         keybord_done_move = mo_custom_laptop.move_raw_ids.filtered(lambda x: x.product_id.id == product_keybord.id and x.state == 'done')
-        self..assertEqual(charger_done_move.product_uom_qty, 12)
-        self..assertEqual(keybord_done_move.product_uom_qty, 12)
+        self.assertEqual(charger_done_move.product_uom_qty, 12)
+        self.assertEqual(keybord_done_move.product_uom_qty, 12)
 
         # Produce remaining 4 quantity
         # ----------------------------
@@ -357,13 +357,13 @@ class TestWorkOrderProcess(common.TransactionCase):
         product_consume = self.env['mrp.product.produce'].with_context(context).create({'product_qty': 4.00})
         laptop_lot_002 = self.env['stock.production.lot'].create({'product_id': custom_laptop.id})
         product_consume.lot_id = laptop_lot_002.id
-        self..assertEqual(len(product_consume.produce_line_ids), 2)
+        self.assertEqual(len(product_consume.produce_line_ids), 2)
         product_consume.produce_line_ids.write({'qty_done': 8})
         product_consume.do_produce()
         charger_move = mo_custom_laptop.move_raw_ids.filtered(lambda x: x.product_id.id == product_charger.id and x.state != 'done')
         keybord_move = mo_custom_laptop.move_raw_ids.filtered(lambda x: x.product_id.id == product_keybord.id and x.state !='done')
-        self..assertEqual(charger_move.quantity_done, 8, "Wrong consumed quantity of %s" % charger_move.product_id.name)
-        self..assertEqual(keybord_move.quantity_done, 8, "Wrong consumed quantity of %s" % keybord_move.product_id.name)
+        self.assertEqual(charger_move.quantity_done, 8, "Wrong consumed quantity of %s" % charger_move.product_id.name)
+        self.assertEqual(keybord_move.quantity_done, 8, "Wrong consumed quantity of %s" % keybord_move.product_id.name)
 
         # Post Inventory of production order.
         mo_custom_laptop.post_inventory()
@@ -492,7 +492,7 @@ class TestWorkOrderProcess(common.TransactionCase):
         product_consume = self.env['mrp.product.produce'].with_context(context).create({'product_qty': 10})
         # laptop_lot_002 = self.env['stock.production.lot'].create({'product_id': custom_laptop.id})
         product_consume.lot_id = lot_a.id
-        self..assertEqual(len(product_consume.produce_line_ids), 2)
+        self.assertEqual(len(product_consume.produce_line_ids), 2)
         product_consume.produce_line_ids.filtered(lambda x : x.product_id == product_C).write({'qty_done': 3000})
         product_consume.produce_line_ids.filtered(lambda x : x.product_id == product_B).write({'qty_done': 20})
         product_consume.do_produce()

@@ -72,8 +72,8 @@ class TestTimesheet(TestCommonTimesheet):
             'name': 'my first timesheet',
             'unit_amount': 4,
         })
-        self..assertEqual(timesheet1.account_id, self.project_customer.analytic_account_id, 'Analytic account should be the same as the project')
-        self..assertEqual(timesheet1.employee_id, self.empl_employee, 'Employee should be the one of the current user')
+        self.assertEqual(timesheet1.account_id, self.project_customer.analytic_account_id, 'Analytic account should be the same as the project')
+        self.assertEqual(timesheet1.employee_id, self.empl_employee, 'Employee should be the one of the current user')
 
         # employee 1 cannot log timesheet for employee 2
         with self.assertRaises(AccessError):
@@ -94,7 +94,7 @@ class TestTimesheet(TestCommonTimesheet):
             'employee_id': self.empl_employee2.id,
         })
         timesheet3._onchange_employee_id()
-        self..assertEqual(timesheet3.user_id, self.user_employee2, 'Timesheet user should be the one linked to the given employee')
+        self.assertEqual(timesheet3.user_id, self.user_employee2, 'Timesheet user should be the one linked to the given employee')
 
     def test_log_access_rights(self):
         """ Test access rights : user can update its own timesheets only, and manager can change all """
@@ -117,7 +117,7 @@ class TestTimesheet(TestCommonTimesheet):
             'unit_amount': 8,
             'employee_id': self.empl_employee2.id,
         })
-        self..assertEqual(timesheet1.user_id, self.user_employee2, 'Changing timesheet employee should change the related user')
+        self.assertEqual(timesheet1.user_id, self.user_employee2, 'Changing timesheet employee should change the related user')
 
     def test_transfert_project(self):
         """ Test transfert task with timesheet to another project """
@@ -137,9 +137,9 @@ class TestTimesheet(TestCommonTimesheet):
 
         timesheet_count1 = Timesheet.search_count([('project_id', '=', self.project_customer.id)])
         timesheet_count2 = Timesheet.search_count([('project_id', '=', self.project_customer2.id)])
-        self..assertEqual(timesheet_count1, 1, "One timesheet in project 1")
-        self..assertEqual(timesheet_count2, 0, "No timesheet in project 2")
-        self..assertEqual(len(self.task1.timesheet_ids), 1, "The timesheet should be linked to task 1")
+        self.assertEqual(timesheet_count1, 1, "One timesheet in project 1")
+        self.assertEqual(timesheet_count2, 0, "No timesheet in project 2")
+        self.assertEqual(len(self.task1.timesheet_ids), 1, "The timesheet should be linked to task 1")
 
         # change project of task 1
         self.task1.write({
@@ -148,9 +148,9 @@ class TestTimesheet(TestCommonTimesheet):
 
         timesheet_count1 = Timesheet.search_count([('project_id', '=', self.project_customer.id)])
         timesheet_count2 = Timesheet.search_count([('project_id', '=', self.project_customer2.id)])
-        self..assertEqual(timesheet_count1, 0, "No timesheet in project 1")
-        self..assertEqual(timesheet_count2, 1, "One timesheet in project 2")
-        self..assertEqual(len(self.task1.timesheet_ids), 1, "The timesheet should be linked to task 1")
+        self.assertEqual(timesheet_count1, 0, "No timesheet in project 1")
+        self.assertEqual(timesheet_count2, 1, "One timesheet in project 2")
+        self.assertEqual(len(self.task1.timesheet_ids), 1, "The timesheet should be linked to task 1")
 
         # it is forbidden to set a task with timesheet without project
         with self.assertRaises(UserError):
