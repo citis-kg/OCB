@@ -444,11 +444,18 @@ class Website(models.Model):
 
         # dont't list routes without argument having no default value or converter
         # spec = inspect.getargspec(endpoint.method.original_func)
-        spec = inspect.signature(endpoint.method.original_func)
-
         # remove self and arguments having a default value
-        defaults_count = len(spec.defaults or [])
-        args = spec.args[1:(-defaults_count or None)]
+        # defaults_count = len(spec.defaults or [])
+        # args = spec.args[1:(-defaults_count or None)]
+
+        sig = inspect.signature(endpoint.method.original_func)
+        # remove self and arguments having a default value
+        params = list(sig.parameters.values())
+        args = [
+            param.name
+            for param in params[1:]  # Skip 'self'
+            if param.default == param.empty  # Exclude arguments with default values
+        ]
 
         # check that all args have a converter
         return all((arg in rule._converters) for arg in args)
