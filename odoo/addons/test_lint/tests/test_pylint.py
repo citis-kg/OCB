@@ -110,7 +110,7 @@ class TestPyLint(TransactionCase):
     ] + list(tools.SUPPORTED_DEBUGGER)
 
     def _skip_test(self, reason):
-        _logger.warn(reason)
+        _logger.warning(reason)
         self.skipTest(reason)
 
     def test_pylint(self):

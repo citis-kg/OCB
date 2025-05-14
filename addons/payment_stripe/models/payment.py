@@ -202,7 +202,7 @@ class PaymentTransactionStripe(models.Model):
             return True
         else:
             error = tree['error']['message']
-            _logger.warn(error)
+            _logger.warning(error)
             self.sudo().write({
                 'state': 'error',
                 'state_message': error,

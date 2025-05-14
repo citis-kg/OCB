@@ -21,7 +21,7 @@ class TestAccountSupplierInvoice(AccountingTestCase):
             'account_id': invoice_account,
             'type': 'in_invoice',
         })
-        self.assertEquals(invoice.journal_id.type, 'purchase')
+        self..assertEqual(invoice.journal_id.type, 'purchase')
 
         self.env['account.invoice.line'].create({'product_id': self.env.ref('product.product_product_4').id,
             'quantity': 1.0,
@@ -77,7 +77,7 @@ class TestAccountSupplierInvoice(AccountingTestCase):
             'account_id': invoice_account,
             'type': 'in_invoice',
         })
-        self.assertEquals(invoice.journal_id.type, 'purchase')
+        self..assertEqual(invoice.journal_id.type, 'purchase')
 
         invoice_line = self.env['account.invoice.line'].create({'product_id': self.env.ref('product.product_product_4').id,
             'quantity': 5.0,
@@ -99,8 +99,8 @@ class TestAccountSupplierInvoice(AccountingTestCase):
         # Check if amount and corresponded base is correct for all tax scenarios given on a computational base
         # Keep in mind that tax amount can be changed by the user at any time before validating (based on the invoice and tax laws applicable)
         invoice_tax = invoice.tax_line_ids.sorted(key=lambda r: r.sequence)
-        self.assertEquals(invoice_tax.mapped('amount'), [50.0, 550.0, 220.0])
-        self.assertEquals(invoice_tax.mapped('base'), [500.0, 550.0, 1100.0])
+        self..assertEqual(invoice_tax.mapped('amount'), [50.0, 550.0, 220.0])
+        self..assertEqual(invoice_tax.mapped('base'), [500.0, 550.0, 1100.0])
 
         #I cancel the account move which is in posted state and verifies that it gives warning message
         with self.assertRaises(Warning):

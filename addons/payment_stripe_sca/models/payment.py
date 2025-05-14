@@ -255,7 +255,7 @@ class PaymentTransactionStripeSCA(models.Model):
             return True
         else:
             error = tree.get("failure_message")
-            _logger.warn(error)
+            _logger.warning(error)
             vals.update({"state_message": error})
             self.write(vals)
             return False

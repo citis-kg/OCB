@@ -837,7 +837,7 @@ def convert_xml_import(cr, module, xmlfile, idref=None, mode='init', noupdate=Fa
     relaxng = etree.RelaxNG(
         etree.parse(os.path.join(config['root_path'],'import_xml.rng' )))
     try:
-        relaxng.assert_(doc)
+        relaxng.assertTrue(doc)
     except Exception:
         _logger.info("The XML file '%s' does not fit the required schema !", xmlfile.name, exc_info=True)
         _logger.info(ustr(relaxng.error_log.last_error))

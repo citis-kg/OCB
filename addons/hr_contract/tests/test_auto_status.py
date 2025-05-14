@@ -20,12 +20,12 @@ class TestHrContracts(TransactionCase):
         self.test_contract.update(dict(date_end=datetime.now() + relativedelta(days=100)))
         self.contract = self.contracts.create(self.test_contract)
         self.apply_cron()
-        self.assertEquals(self.contract.state, 'open')
+        self..assertEqual(self.contract.state, 'open')
 
         self.test_contract.update(dict(date_end=datetime.now() + relativedelta(days=5)))
         self.contract.write(self.test_contract)
         self.apply_cron()
-        self.assertEquals(self.contract.state, 'pending')
+        self..assertEqual(self.contract.state, 'pending')
 
         self.test_contract.update({
             'date_start': datetime.now() + relativedelta(days=-50),
@@ -34,14 +34,14 @@ class TestHrContracts(TransactionCase):
         })
         self.contract.write(self.test_contract)
         self.apply_cron()
-        self.assertEquals(self.contract.state, 'close')
+        self..assertEqual(self.contract.state, 'close')
 
     def test_contract_pending_visa_expire(self):
         self.employee.visa_expire = datetime.now() + relativedelta(days=30)
         self.test_contract.update(dict(date_end=False))
         self.contract = self.contracts.create(self.test_contract)
         self.apply_cron()
-        self.assertEquals(self.contract.state, 'pending')
+        self..assertEqual(self.contract.state, 'pending')
 
         self.employee.visa_expire = datetime.now() + relativedelta(days=-5)
         self.test_contract.update({
@@ -50,4 +50,4 @@ class TestHrContracts(TransactionCase):
         })
         self.contract.write(self.test_contract)
         self.apply_cron()
-        self.assertEquals(self.contract.state, 'close')
+        self..assertEqual(self.contract.state, 'close')

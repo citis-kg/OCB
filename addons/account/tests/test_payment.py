@@ -104,15 +104,15 @@ class TestPayment(AccountingTestCase):
                 for currency_diff_line in currency_diff_move.line_ids:
                     if aml_dict.get('currency_diff') > 0:
                         if currency_diff_line.account_id.id == aml_rec.account_id.id:
-                            self.assertAlmostEquals(currency_diff_line.debit, aml_dict.get('currency_diff'))
+                            self.assertAlmostEqual(currency_diff_line.debit, aml_dict.get('currency_diff'))
                         else:
-                            self.assertAlmostEquals(currency_diff_line.credit, aml_dict.get('currency_diff'))
+                            self.assertAlmostEqual(currency_diff_line.credit, aml_dict.get('currency_diff'))
                             self.assertIn(currency_diff_line.account_id.id, [self.diff_expense_account.id, self.diff_income_account.id])
                     else:
                         if currency_diff_line.account_id.id == aml_rec.account_id.id:
-                            self.assertAlmostEquals(currency_diff_line.credit, abs(aml_dict.get('currency_diff')))
+                            self.assertAlmostEqual(currency_diff_line.credit, abs(aml_dict.get('currency_diff')))
                         else:
-                            self.assertAlmostEquals(currency_diff_line.debit, abs(aml_dict.get('currency_diff')))
+                            self.assertAlmostEqual(currency_diff_line.debit, abs(aml_dict.get('currency_diff')))
                             self.assertIn(currency_diff_line.account_id.id, [self.diff_expense_account.id, self.diff_income_account.id])
 
     def test_full_payment_process(self):
@@ -129,7 +129,7 @@ class TestPayment(AccountingTestCase):
         register_payments.create_payments()
         payment = self.payment_model.search([], order="id desc", limit=1)
 
-        self.assertAlmostEquals(payment.amount, 300)
+        self.assertAlmostEqual(payment.amount, 300)
         self.assertEqual(payment.state, 'posted')
         self.assertEqual(payment.state, 'posted')
         self.assertEqual(inv_1.state, 'paid')
@@ -206,7 +206,7 @@ class TestPayment(AccountingTestCase):
         payment_ids = self.payment_model.search([('invoice_ids', 'in', ids)], order="id desc")
 
         self.assertEqual(len(payment_ids), 3)
-        self.assertAlmostEquals(register_payments.amount, 750)
+        self.assertAlmostEqual(register_payments.amount, 750)
 
         inv_1_2_pay = None
         inv_3_pay = None
@@ -263,7 +263,7 @@ class TestPayment(AccountingTestCase):
         payment_id = self.payment_model.search([('invoice_ids', 'in', ids)], order="id desc")
 
         self.assertEqual(len(payment_id), 1)
-        self.assertAlmostEquals(register_payments.amount, 450)
+        self.assertAlmostEqual(register_payments.amount, 450)
 
         self.assertEqual(payment_id.state, 'posted')
 
@@ -294,7 +294,7 @@ class TestPayment(AccountingTestCase):
         payment_id = payment_ids[0]
 
         self.assertEqual(payment_id.invoice_ids[0].id, inv_1.id)
-        self.assertAlmostEquals(payment_id.amount, 550)
+        self.assertAlmostEqual(payment_id.amount, 550)
         self.assertEqual(payment_id.payment_type, 'inbound')
         self.assertEqual(payment_id.partner_id, self.partner_agrolait)
         self.assertEqual(payment_id.partner_type, 'customer')
@@ -319,7 +319,7 @@ class TestPayment(AccountingTestCase):
         payment_id = payment_ids[0]
 
         self.assertEqual(payment_id.invoice_ids[0].id, inv_2.id)
-        self.assertAlmostEquals(payment_id.amount, 300)
+        self.assertAlmostEqual(payment_id.amount, 300)
         self.assertEqual(payment_id.payment_type, 'outbound')
         self.assertEqual(payment_id.partner_id, self.partner_china_exp)
         self.assertEqual(payment_id.partner_type, 'supplier')

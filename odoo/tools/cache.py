@@ -12,7 +12,7 @@ try:
 except ImportError:
     import inspect
     from inspect import signature, getfullargspec
-    inspect.getargspec = getfullargspec
+    inspect.getargspec = signature
 
 import logging
 
@@ -124,9 +124,11 @@ class ormcache_context(ormcache):
         # CITIS: fix deprecated code since python 3.11
         # spec = getargspec(self.method)
         # args = formatargspec(*spec)[1:-1]
-        spec = getfullargspec(self.method)
-        args = str(signature(self.method))[1:-1]
-        cont_expr = "(context or {})" if 'context' in spec.args else "self._context"
+        # cont_expr = "(context or {})" if 'context' in spec.args else "self._context"
+        sign = signature(self.method)
+        args = str(sign)[1:-1]
+        cont_expr = "(context or {})" if 'context' in sign.parameters else "self._context"
+
         keys_expr = "tuple(%s.get(k) for k in %r)" % (cont_expr, self.keys)
         if self.args:
             code = "lambda %s: (%s, %s)" % (args, ", ".join(self.args), keys_expr)
@@ -156,13 +158,16 @@ class ormcache_multi(ormcache):
         # CITIS: fix deprecated code since python 3.11
         # spec = getargspec(self.method)
         # args = formatargspec(*spec)[1:-1]
-        spec = getfullargspec(self.method)
-        args = str(signature(self.method))[1:-1]
+        # spec = getfullargspec(self.method)
+        # args = str(signature(self.method))[1:-1]
+        sign = signature(self.method)
+        args = str(sign)[1:-1]
         code_multi = "lambda %s: %s" % (args, self.multi)
         self.key_multi = unsafe_eval(code_multi)
 
         # self.multi_pos is the position of self.multi in args
-        self.multi_pos = spec.args.index(self.multi)
+        # self.multi_pos = spec.args.index(self.multi)
+        self.multi_pos = list(sign.parameters).index(self.multi)
 
     def lookup(self, method, *args, **kwargs):
         d, key0, counter = self.lru(args[0])

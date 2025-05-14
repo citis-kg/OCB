@@ -49,7 +49,7 @@ class pos_cache(models.Model):
             self.product_fields = str(fields)
             self.refresh_cache()
 
-        return json.loads(base64.decodestring(self.cache).decode('utf-8'))
+        return json.loads(base64.decodebytes(self.cache).decode('utf-8'))
 
 
 class pos_config(models.Model):

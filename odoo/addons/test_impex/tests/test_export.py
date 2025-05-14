@@ -354,7 +354,7 @@ class test_m2o(CreatorCase):
         record = self.env['export.integer'].create({'value': 42})
         # Expecting the m2o target model name in the external id,
         # not this model's name
-        self.assertRegexpMatches(
+        self.assertRegex(
             self.export(record.id, fields=['value/id'])[0][0],
             u'__export__.export_integer_%d_[0-9a-f]{8}' % record.id)
 

@@ -68,20 +68,20 @@ class TestReInvoice(CommonTest):
         self.expense_sheet.approve_expense_sheets()
         self.expense_sheet.action_sheet_move_create()
 
-        self.assertEquals(len(self.sale_order.order_line), 3, "There should be 3 lines on the SO")
-        self.assertEquals(sale_order_line.qty_delivered, 0, "Exising SO line should not be impacted by reinvoicing product at cost")
+        self..assertEqual(len(self.sale_order.order_line), 3, "There should be 3 lines on the SO")
+        self..assertEqual(sale_order_line.qty_delivered, 0, "Exising SO line should not be impacted by reinvoicing product at cost")
 
         sol_ordered = self.sale_order.order_line.filtered(lambda sol: sol.product_id == self.product_ordered_cost and sol != sale_order_line)
         self.assertTrue(sol_ordered, "A new line with ordered expense should have been created on expense report posting")
-        self.assertEquals(sol_ordered.price_unit, expense1.unit_amount, "The unit price of new SO line should be the one from the expense (at cost)")
-        self.assertEquals(sol_ordered.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
-        self.assertEquals(sol_ordered.qty_delivered, expense1.quantity, "The delivered quantity of new SO line should be the one from the expense")
+        self..assertEqual(sol_ordered.price_unit, expense1.unit_amount, "The unit price of new SO line should be the one from the expense (at cost)")
+        self..assertEqual(sol_ordered.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
+        self..assertEqual(sol_ordered.qty_delivered, expense1.quantity, "The delivered quantity of new SO line should be the one from the expense")
 
         sol_deliver = self.sale_order.order_line.filtered(lambda sol: sol.product_id == self.product_deliver_cost and sol != sale_order_line)
         self.assertTrue(sol_deliver, "A new line with delivered expense should have been created on expense report posting")
-        self.assertEquals(sol_deliver.price_unit, expense2.unit_amount, "The unit price of new SO line should be the one from the expense (at cost)")
-        self.assertEquals(sol_deliver.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
-        self.assertEquals(sol_deliver.qty_delivered, expense2.quantity, "The delivered quantity of new SO line should be the one from the expense")
+        self..assertEqual(sol_deliver.price_unit, expense2.unit_amount, "The unit price of new SO line should be the one from the expense (at cost)")
+        self..assertEqual(sol_deliver.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
+        self..assertEqual(sol_deliver.qty_delivered, expense2.quantity, "The delivered quantity of new SO line should be the one from the expense")
 
     def test_sales_price_ordered(self):
         """ Test invoicing expenses at sales price for product based on ordered quantities. """
@@ -108,14 +108,14 @@ class TestReInvoice(CommonTest):
         self.expense_sheet.action_sheet_move_create()
 
         self.assertTrue(self.sale_order.analytic_account_id, "Posting expense with an expense product should trigger the analytic account creation on SO")
-        self.assertEquals(self.sale_order.analytic_account_id, expense1.analytic_account_id, "SO analytic account should be the same for the expense")
-        self.assertEquals(len(self.sale_order.order_line), 1, "A new So line should have been created on expense report posting")
+        self..assertEqual(self.sale_order.analytic_account_id, expense1.analytic_account_id, "SO analytic account should be the same for the expense")
+        self..assertEqual(len(self.sale_order.order_line), 1, "A new So line should have been created on expense report posting")
 
         sol_ordered = self.sale_order.order_line.filtered(lambda sol: sol.product_id == expense1.product_id)
         self.assertTrue(sol_ordered, "A new line with ordered expense should have been created on expense report posting")
-        self.assertEquals(sol_ordered.price_unit, 10, "The unit price of new SO line should be the one from the expense (at sales price)")
-        self.assertEquals(sol_ordered.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
-        self.assertEquals(sol_ordered.qty_delivered, expense1.quantity, "The delivered quantity of new SO line should be the one from the expense")
+        self..assertEqual(sol_ordered.price_unit, 10, "The unit price of new SO line should be the one from the expense (at sales price)")
+        self..assertEqual(sol_ordered.product_uom_qty, 0, "The ordered quantity of new SO line should be zero")
+        self..assertEqual(sol_ordered.qty_delivered, expense1.quantity, "The delivered quantity of new SO line should be the one from the expense")
 
     def test_sales_price_delivered(self):
         """ Test invoicing expenses at sales price for product based on delivered quantities. Check the existing SO line is incremented. """
@@ -151,11 +151,11 @@ class TestReInvoice(CommonTest):
         self.expense_sheet.approve_expense_sheets()
         self.expense_sheet.action_sheet_move_create()
 
-        self.assertEquals(len(self.sale_order.order_line), 1, "No SO line should have been created (or removed) on expense report posting")
+        self..assertEqual(len(self.sale_order.order_line), 1, "No SO line should have been created (or removed) on expense report posting")
 
-        self.assertEquals(sale_order_line.price_unit, 10, "The unit price of SO line should be the same")
-        self.assertEquals(sale_order_line.product_uom_qty, 2, "The ordered quantity of new SO line should be zero")
-        self.assertEquals(sale_order_line.qty_delivered, expense1.quantity, "The delivered quantity of SO line should have been incremented")
+        self..assertEqual(sale_order_line.price_unit, 10, "The unit price of SO line should be the same")
+        self..assertEqual(sale_order_line.product_uom_qty, 2, "The ordered quantity of new SO line should be zero")
+        self..assertEqual(sale_order_line.qty_delivered, expense1.quantity, "The delivered quantity of SO line should have been incremented")
 
     def test_no_expense(self):
         """ Test invoicing expenses with no policy. Check nothing happen. """
@@ -191,9 +191,9 @@ class TestReInvoice(CommonTest):
         self.expense_sheet.action_sheet_move_create()
 
         self.assertTrue(self.sale_order.analytic_account_id, "Posting expense with an expense product (even with no expense pilocy) should trigger the analytic account creation")
-        self.assertEquals(self.sale_order.analytic_account_id, expense1.analytic_account_id, "SO analytic account should be the same for the expense")
-        self.assertEquals(len(self.sale_order.order_line), 1, "No SO line should have been created (or removed) on expense report posting")
+        self..assertEqual(self.sale_order.analytic_account_id, expense1.analytic_account_id, "SO analytic account should be the same for the expense")
+        self..assertEqual(len(self.sale_order.order_line), 1, "No SO line should have been created (or removed) on expense report posting")
 
-        self.assertEquals(sale_order_line.price_unit, self.product_no_expense.list_price, "The unit price of SO line should be the same")
-        self.assertEquals(sale_order_line.product_uom_qty, 2, "The ordered quantity of SO line should be two")
-        self.assertEquals(sale_order_line.qty_delivered, 0, "The delivered quantity of SO line should have been incremented")
+        self..assertEqual(sale_order_line.price_unit, self.product_no_expense.list_price, "The unit price of SO line should be the same")
+        self..assertEqual(sale_order_line.product_uom_qty, 2, "The ordered quantity of SO line should be two")
+        self..assertEqual(sale_order_line.qty_delivered, 0, "The delivered quantity of SO line should have been incremented")

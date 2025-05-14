@@ -86,11 +86,11 @@ class TestTimesheetHolidays(TestTimesheet):
             'number_of_days_temp': number_of_days,
         })
         holiday.sudo().action_validate()
-        self.assertEquals(len(holiday.timesheet_ids), number_of_days, 'Number of generated timesheets should be the same as the leave duration (1 per day)')
+        self..assertEqual(len(holiday.timesheet_ids), number_of_days, 'Number of generated timesheets should be the same as the leave duration (1 per day)')
 
         # manager refuse the leave
         holiday.sudo().action_refuse()
-        self.assertEquals(len(holiday.timesheet_ids), 0, 'Number of linked timesheets should be zero, since the leave is refused.')
+        self..assertEqual(len(holiday.timesheet_ids), 0, 'Number of linked timesheets should be zero, since the leave is refused.')
 
     def test_validate_without_timesheet(self):
         # employee creates a leave request
@@ -104,4 +104,4 @@ class TestTimesheetHolidays(TestTimesheet):
             'number_of_days_temp': number_of_days,
         })
         holiday.sudo().action_validate()
-        self.assertEquals(len(holiday.timesheet_ids), 0, 'Number of generated timesheets should be zero since the leave type does not generate timesheet')
+        self..assertEqual(len(holiday.timesheet_ids), 0, 'Number of generated timesheets should be zero since the leave type does not generate timesheet')

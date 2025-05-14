@@ -1770,7 +1770,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 orderby_terms.append(' '.join(order_split))
             else:
                 # Cannot order by a field that will not appear in the results (needs to be grouped or aggregated)
-                _logger.warn('%s: read_group order by `%s` ignored, cannot sort on empty columns (not grouped/aggregated)',
+                _logger.warning('%s: read_group order by `%s` ignored, cannot sort on empty columns (not grouped/aggregated)',
                              self._name, order_part)
 
         return groupby_terms, orderby_terms
@@ -2955,7 +2955,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             self._cr.execute(query, (tuple(self.ids),))
             uids = [x[0] for x in self._cr.fetchall()]
             if len(uids) != 1 or uids[0] != self._uid:
-                raise AccessError(_('For this kind of document, you may only access records you created yourself.\n\n(Document type: %s)') % (self._description,))
+                info_error = _('For this kind of document, you may only access records you created yourself.\n\n(Document type: %s)') % (self._description,)
+                _logger.exception(f'citdebug: {info_error}')
+                raise AccessError(info_error)
         else:
             where_clause, where_params, tables = self.env['ir.rule'].domain_get(self._name, operation)
             if where_clause:

@@ -267,7 +267,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
 
         # reverse the anonymization:
         # load the json/pickle file content into a data structure:
-        content = base64.decodestring(self.file_import)
+        content = base64.decodebytes(self.file_import)
         try:
             data = json.loads(content.decode('utf8'))
         except Exception:
