@@ -122,7 +122,7 @@ _SAFE_OPCODES = _EXPR_OPCODES.union(set(opmap[x] for x in [
     'POP_JUMP_FORWARD_IF_FALSE', 'CONTAINS_OP', 'LIST_EXTEND',
     'BINARY_OP', 'MAT_VALUE', 'BUILD_STRING', 'FORMAT_VALUE',
     'GEN_START',  # added in 3.10
-    'KW_NAMES', 'JUMP_BACKWARD'
+    'KW_NAMES', 'JUMP_BACKWARD', 'POP_JUMP_FORWARD_IF_TRUE', 'POP_JUMP_BACKWARD_IF_FALSE',
 ] if x in opmap))
 
 _logger = logging.getLogger(__name__)
